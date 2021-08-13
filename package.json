@@ -1,0 +1,43 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "RSS aggregator",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --bail",
+    "test-windows": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest --bail"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jPee2k/frontend-project-lvl3.git"
+  },
+  "keywords": [
+    "rss",
+    "news",
+    "study",
+    "hexlet"
+  ],
+  "author": "jPee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jPee2k/frontend-project-lvl3/issues"
+  },
+  "homepage": "https://github.com/jPee2k/frontend-project-lvl3#readme",
+  "devDependencies": {
+    "eslint": "^7.26.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.2",
+    "eslint-plugin-jest": "^24.3.6",
+    "jest": "^27.0.1",
+    "lodash-cli": "^4.17.5",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
+  }
+}
