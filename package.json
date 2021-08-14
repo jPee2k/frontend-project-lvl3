@@ -5,7 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --bail",
-    "test-windows": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest --bail"
+    "test-windows": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest --bail",
+    "dev": "webpack --node-env development",
+    "prod": "webpack --node-env production",
+    "watch": "webpack --watch --node-env development"
   },
   "repository": {
     "type": "git",
@@ -24,20 +27,50 @@
   },
   "homepage": "https://github.com/jPee2k/frontend-project-lvl3#readme",
   "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/eslint-parser": "^7.14.7",
+    "@babel/preset-env": "^7.14.8",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^27.0.6",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^6.2.0",
     "eslint": "^7.26.0",
     "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-import": "^2.23.2",
     "eslint-plugin-jest": "^24.3.6",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.2",
     "jest": "^27.0.1",
+    "jest-cli": "^27.0.6",
+    "lodash": "^4.17.21",
     "lodash-cli": "^4.17.5",
+    "mini-css-extract-plugin": "^2.2.0",
+    "postcss": "^8.3.6",
+    "postcss-loader": "^6.1.1",
+    "postcss-preset-env": "^6.7.0",
+    "sass": "^1.35.2",
+    "sass-loader": "^12.1.0",
+    "source-map-loader": "^3.0.0",
+    "style-loader": "^3.2.1",
+    "url-loader": "^4.1.1",
     "webpack": "^5.37.1",
-    "webpack-cli": "^4.7.0"
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^3.11.2"
   },
   "jest": {
-    "testEnvironment": "node",
-    "transform": {}
+    "verbose": true,
+    "testURL": "http://localhost/",
+    "testEnvironment": "jsdom"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.9.2",
+    "autoprefixer": "^10.3.1",
+    "axios": "^0.21.1",
+    "bootstrap": "^5.1.0",
+    "lodash": "^4.17.21",
+    "on-change": "^3.0.2",
+    "uuid": "^8.3.2",
+    "yup": "^0.32.9"
   }
 }
