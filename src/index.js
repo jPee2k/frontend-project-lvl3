@@ -1,5 +1,6 @@
 import 'bootstrap/dist/js/bootstrap.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './scss/app.scss';
+import './scss/index.scss';
+import runApp from './js/init.js';
 
-// console.log('ehu!');
+runApp();
