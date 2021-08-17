@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import axios from 'axios';
 
 const validateUrl = (state, form) => {
   const formData = new FormData(form);
@@ -11,6 +12,23 @@ const validateUrl = (state, form) => {
   return schema.validate(url);
 };
 
+const parseRss = (data) => {
+  const parser = new DOMParser();
+  return parser.parseFromString(data, 'application/xml');
+};
+
+const downloadFeed = (url) => {
+  const api = new URL('/get', 'https://hexlet-allorigins.herokuapp.com');
+  api.searchParams.set('url', url);
+  api.searchParams.set('disableCache', 'true');
+  const apiUrl = api.toString();
+
+  axios.get(apiUrl)
+    .then((response) => {
+      console.log(response);
+    });
+};
+
 const app = (state, elements) => {
   elements.form.addEventListener('submit', (evt) => {
     evt.preventDefault();
@@ -21,17 +39,14 @@ const app = (state, elements) => {
         state.errors = [];
         state.feeds.push(data);
         state.processState = 'sending';
+        return data;
       })
+      .then((url) => downloadFeed(url))
       .catch((err) => {
         state.valid = false;
         state.errors = err.errors;
       });
-    // then get xml from axios request
-    // then parse
   });
-
-  // const parser = new DOMParser();
-  // const doc = parser.parseFromString(xml, 'application/xml');
 };
 
 export default app;
