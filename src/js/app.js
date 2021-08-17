@@ -1,30 +1,33 @@
 import * as yup from 'yup';
 
-const validateUrl = (state, url) => {
+const validateUrl = (state, form) => {
+  const formData = new FormData(form);
+  const url = formData.get('url');
   const schema = yup.string()
     .url('Ссылка должна быть валидным URL')
     .required('Это поле обязательно к заполнению')
     .notOneOf(state.feeds, 'RSS уже существует');
 
-  schema.validate(url)
-    .then(() => {
-      state.valid = true;
-      state.errors = [];
-    })
-    .catch((err) => {
-      state.valid = false;
-      state.errors = err.errors;
-    });
+  return schema.validate(url);
 };
 
-const app = (state, form) => {
-  form.addEventListener('submit', (evt) => {
+const app = (state, elements) => {
+  elements.form.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
-    const formData = new FormData(form);
-    const url = formData.get('url');
-
-    validateUrl(state, url);
+    validateUrl(state, elements.form)
+      .then((data) => {
+        state.valid = true;
+        state.errors = [];
+        state.feeds.push(data);
+        state.processState = 'sending';
+      })
+      .catch((err) => {
+        state.valid = false;
+        state.errors = err.errors;
+      });
+    // then get xml from axios request
+    // then parse
   });
 
   // const parser = new DOMParser();

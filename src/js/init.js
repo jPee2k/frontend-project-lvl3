@@ -3,17 +3,22 @@ import initView from './view.js';
 
 const init = () => {
   const unWatchedState = {
-    state: 'filling',
+    processState: 'filling',
     valid: null,
     errors: [],
     feeds: [],
     posts: [],
   };
 
-  const form = document.querySelector('.rss-form');
-  const state = initView(unWatchedState, form);
+  const elements = {
+    form: document.querySelector('.rss-form'),
+    input: document.querySelector('#url-input'),
+    button: document.querySelector('button[aria-label="add"]'),
+    container: document.querySelector('p.feedback'),
+  };
+  const state = initView(unWatchedState, elements);
 
-  app(state, form);
+  app(state, elements);
 };
 
 export default init;
