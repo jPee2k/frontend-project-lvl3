@@ -42,22 +42,20 @@ const handleState = (elements, processState) => {
   }
 };
 
-const initView = (unWatchedState, elements) => {
-  return onChange(unWatchedState, (path, value) => {
-    switch (path) {
-      case 'valid':
-        renderInput(elements, value);
-        break;
-      case 'errors':
-        renderText(elements, value[0]);
-        break;
-      case 'processState':
-        handleState(elements, value);
-        break;
-      default:
-        break;
-    }
-  });
-};
+const initView = (unWatchedState, elements) => onChange(unWatchedState, (path, value) => {
+  switch (path) {
+    case 'valid':
+      renderInput(elements, value);
+      break;
+    case 'errors':
+      renderText(elements, value[0]);
+      break;
+    case 'processState':
+      handleState(elements, value);
+      break;
+    default:
+      break;
+  }
+});
 
 export default initView;
