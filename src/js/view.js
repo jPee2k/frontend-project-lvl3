@@ -8,19 +8,19 @@ const renderInput = (elements, isValid) => {
 };
 
 const renderText = (elements, text, isError = true) => {
-  elements.container.classList.remove('text-success', 'text-danger');
-  elements.container.textContent = '';
+  elements.textContainer.classList.remove('text-success', 'text-danger');
+  elements.textContainer.textContent = '';
 
   if (text) {
-    elements.container.classList.add('text-success');
-    elements.container.textContent = text;
+    elements.textContainer.classList.add('text-success');
+    elements.textContainer.textContent = text;
   }
   if (isError) {
-    elements.container.classList.add('text-danger');
+    elements.textContainer.classList.add('text-danger');
   }
 };
 
-const handleState = (elements, processState) => {
+const handleState = (state, elements, processState) => {
   switch (processState) {
     case 'filling':
       elements.button.disabled = false;
@@ -36,26 +36,39 @@ const handleState = (elements, processState) => {
       break;
     case 'failed':
       elements.button.disabled = false;
+      renderText(elements, state.error);
       break;
     default:
       throw new Error(`Wrong process state ${processState}!`);
   }
 };
 
-const initView = (unWatchedState, elements) => onChange(unWatchedState, (path, value) => {
-  switch (path) {
-    case 'valid':
-      renderInput(elements, value);
-      break;
-    case 'errors':
-      renderText(elements, value[0]);
-      break;
-    case 'processState':
-      handleState(elements, value);
-      break;
-    default:
-      break;
-  }
-});
+const initView = (unWatchedState, elements) => {
+  const state = onChange(unWatchedState, (path, value) => {
+    switch (path) {
+      case 'processState':
+        handleState(state, elements, value);
+        break;
+      case 'valid':
+        renderInput(elements, value);
+        break;
+      case 'error':
+        renderText(elements, value);
+        break;
+      case 'feeds':
+        // render feed block
+        // elements.feedsContainer
+        break;
+      case 'posts':
+        // render posts block
+        // elements.postsContainer
+        break;
+      default:
+        break;
+    }
+  });
+
+  return state;
+};
 
 export default initView;
