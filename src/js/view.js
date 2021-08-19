@@ -1,4 +1,6 @@
 import onChange from 'on-change';
+import renderPosts from './posts.template.js';
+import renderFeeds from './feeds.template.js';
 
 const renderInput = (elements, isValid) => {
   const validationClassName = isValid ? 'is-valid' : 'is-invalid';
@@ -27,10 +29,10 @@ const handleState = (state, elements, processState) => {
       break;
     case 'sending':
       elements.button.disabled = true;
-      elements.form.reset();
-      elements.input.focus();
       break;
     case 'finished':
+      elements.form.reset();
+      elements.input.focus();
       elements.button.disabled = false;
       renderText(elements, 'RSS успешно загружен', false);
       break;
@@ -56,12 +58,12 @@ const initView = (unWatchedState, elements) => {
         renderText(elements, value);
         break;
       case 'feeds':
-        // render feed block
-        // elements.feedsContainer
+        // refactor -> render wrapper -> append & render only new feed
+        renderFeeds(state, elements);
         break;
       case 'posts':
-        // render posts block
-        // elements.postsContainer
+        // refactor -> render wrapper -> append & render only new posts
+        renderPosts(state, elements);
         break;
       default:
         break;

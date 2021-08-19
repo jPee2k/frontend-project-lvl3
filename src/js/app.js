@@ -76,7 +76,6 @@ const app = (state, elements) => {
       })
       .catch((err) => {
         state.processState = 'failed';
-
         if (err.isAxiosError) {
           state.error = 'Ой... что-то пошло не так';
         } else {
