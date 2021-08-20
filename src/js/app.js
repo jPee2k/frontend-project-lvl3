@@ -11,7 +11,7 @@ const validateUrl = (state, form) => {
 
   const schema = yup.string()
     .url('Ссылка должна быть валидным URL')
-    .required('Это поле обязательно к заполнению')
+    .required('Не должно быть пустым')
     .notOneOf(existUrls, 'RSS уже существует');
 
   return schema.validate(url);
@@ -133,7 +133,7 @@ const app = (state, elements) => {
       .catch((err) => {
         state.processState = 'failed';
         if (err.isAxiosError) {
-          state.error = 'Ой... что-то пошло не так';
+          state.error = 'Ошибка сети';
         } else {
           // validate message
           state.valid = false;
