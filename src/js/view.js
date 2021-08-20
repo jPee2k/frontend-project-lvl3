@@ -1,6 +1,6 @@
 import onChange from 'on-change';
-import renderPosts from './posts.template.js';
-import renderFeeds from './feeds.template.js';
+import renderFeeds from './feeds.js';
+import { renderPosts, prependPosts } from './posts.js';
 
 const renderInput = (elements, isValid) => {
   const validationClassName = isValid ? 'is-valid' : 'is-invalid';
@@ -45,6 +45,14 @@ const handleState = (state, elements, processState) => {
   }
 };
 
+const markLinks = ({ postsContainer }, linksIds = []) => {
+  linksIds.forEach((id) => {
+    postsContainer
+      .querySelector(`a[data-id="${parseInt(id, 10)}"]`)
+      .classList.replace('fw-bold', 'fw-normal');
+  });
+};
+
 const initView = (unWatchedState, elements) => {
   const state = onChange(unWatchedState, (path, value) => {
     switch (path) {
@@ -58,12 +66,16 @@ const initView = (unWatchedState, elements) => {
         renderText(elements, value);
         break;
       case 'feeds':
-        // refactor -> render wrapper -> append & render only new feed
         renderFeeds(state, elements);
         break;
       case 'posts':
-        // refactor -> render wrapper -> append & render only new posts
         renderPosts(state, elements);
+        break;
+      case 'newPosts':
+        prependPosts(state, elements);
+        break;
+      case 'uiState.visitedLinks':
+        markLinks(elements, value);
         break;
       default:
         break;

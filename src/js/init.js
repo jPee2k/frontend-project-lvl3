@@ -4,10 +4,14 @@ import initView from './view.js';
 const init = () => {
   const unWatchedState = {
     processState: 'filling',
+    uiState: {
+      visitedLinks: [],
+    },
     valid: true,
     error: null,
     feeds: [],
     posts: [],
+    newPosts: [],
   };
 
   const elements = {

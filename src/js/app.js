@@ -1,3 +1,5 @@
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
+
 import * as yup from 'yup';
 import axios from 'axios';
 import _ from 'lodash';
@@ -15,11 +17,22 @@ const validateUrl = (state, form) => {
   return schema.validate(url);
 };
 
+const removeCdata = (str) => {
+  const regexp1 = /^<!\[CDATA\[/;
+  const regexp2 = /]]>$/;
+
+  return str
+    .replace(regexp1, '')
+    .replace(regexp2, '');
+};
+
 const parseRss = ({ rssLink, response }) => {
   const parser = new DOMParser();
   const rss = parser.parseFromString(response, 'application/xml');
+  const error = rss.querySelector('parsererror');
 
-  if (rss.querySelector('parsererror')) {
+  if (error) {
+    console.error(error.querySelector('div').textContent);
     throw new Error('Ресурс не содержит валидный RSS');
   }
 
@@ -35,7 +48,8 @@ const parseRss = ({ rssLink, response }) => {
   const posts = [...items].map((item) => {
     const postTitle = item.querySelector('title').textContent;
     const postLink = item.querySelector('link').textContent;
-    const postDescription = item.querySelector('description').textContent;
+    let postDescription = item.querySelector('description').textContent;
+    postDescription = removeCdata(postDescription);
 
     return {
       id: _.uniqueId(), feedId, title: postTitle, description: postDescription, url: postLink,
@@ -56,10 +70,52 @@ const loadRss = (rssLink) => {
     .then((response) => ({ rssLink, response: response.data.contents }));
 };
 
+const updateRss = (state) => {
+  if (state.feeds.length < 1) {
+    return;
+  }
+
+  const promises = state.feeds.map((feed) => loadRss(feed.url));
+
+  Promise.all(promises)
+    .then((responses) => {
+      const posts = responses
+        .flatMap((response) => parseRss(response).posts);
+
+      const newPosts = _.differenceBy(state.posts, posts, 'url');
+
+      if (newPosts.length > 0) {
+        state.newPosts = newPosts;
+        state.posts.unshift(...newPosts);
+      }
+    });
+};
+
+const makeTimeout = (delay, state) => {
+  let time = delay;
+
+  const iter = (id = null) => {
+    clearTimeout(id);
+
+    const timerId = setTimeout(() => {
+      try {
+        updateRss(state);
+        time = delay;
+      } catch (err) {
+        console.error(err);
+        time += delay;
+      }
+
+      iter(timerId);
+    }, time);
+  };
+
+  iter();
+};
+
 const app = (state, elements) => {
   elements.form.addEventListener('submit', (evt) => {
     evt.preventDefault();
-
     validateUrl(state, elements.form)
       .then((url) => {
         state.valid = true;
@@ -85,6 +141,8 @@ const app = (state, elements) => {
         }
       });
   });
+
+  makeTimeout(5000, state);
 };
 
 export default app;
