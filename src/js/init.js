@@ -15,7 +15,7 @@ const init = () => {
   };
 
   const elements = {
-    form: document.querySelector('.rss-form'),
+    form: document.querySelector('form'),
     input: document.querySelector('#url-input'),
     button: document.querySelector('button[aria-label="add"]'),
     textContainer: document.querySelector('p.feedback'),
