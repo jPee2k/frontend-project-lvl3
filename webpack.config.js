@@ -47,6 +47,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: path.resolve(__dirname, 'dist/index.html'),
       template: 'index.html',
+      favicon: './src/img/icons/rss.png',
     }),
   ],
 };
