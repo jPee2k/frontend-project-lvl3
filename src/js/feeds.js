@@ -16,7 +16,7 @@ const generateFeeds = (feeds) => feeds.map((feed) => {
   return feedItem;
 });
 
-const renderFeeds = ({ feeds }, { feedsContainer }) => {
+const renderFeeds = ({ feeds }, { feedsContainer }, i18n) => {
   const cardWrapper = document.createElement('div');
   cardWrapper.classList.add('card', 'border-0');
 
@@ -25,7 +25,7 @@ const renderFeeds = ({ feeds }, { feedsContainer }) => {
 
   const cardTitle = document.createElement('h2');
   cardTitle.classList.add('card-title', 'h4');
-  cardTitle.textContent = 'Фиды';
+  cardTitle.textContent = i18n.t('titles.feeds');
 
   const feedsList = document.createElement('ul');
   feedsList.classList.add('list-group', 'border-0', 'rounded-0');

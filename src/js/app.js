@@ -4,15 +4,15 @@ import * as yup from 'yup';
 import axios from 'axios';
 import _ from 'lodash';
 
-const validateUrl = (state, form) => {
+const validateUrl = (state, form, i18n) => {
   const formData = new FormData(form);
   const url = formData.get('url').trim();
   const existUrls = state.feeds.map((feed) => feed.url);
 
   const schema = yup.string()
-    .url('Ссылка должна быть валидным URL')
-    .required('Не должно быть пустым')
-    .notOneOf(existUrls, 'RSS уже существует');
+    .url(i18n.t('errors.url'))
+    .required(i18n.t('errors.required'))
+    .notOneOf(existUrls, 'errors.rssExist');
 
   return schema.validate(url);
 };
@@ -26,14 +26,14 @@ const removeCdata = (str) => {
     .replace(regexp2, '');
 };
 
-const parseRss = ({ rssLink, response }) => {
+const parseRss = ({ rssLink, response }, i18n) => {
   const parser = new DOMParser();
   const rss = parser.parseFromString(response, 'application/xml');
   const error = rss.querySelector('parsererror');
 
   if (error) {
     console.error(error.querySelector('div').textContent);
-    throw new Error('Ресурс не содержит валидный RSS');
+    throw new Error(i18n.t('errors.invalidRss'));
   }
 
   const feedId = _.uniqueId();
@@ -70,7 +70,7 @@ const loadRss = (rssLink) => {
     .then((response) => ({ rssLink, response: response.data.contents }));
 };
 
-const updateRss = (state) => {
+const updateRss = (state, i18n) => {
   if (state.feeds.length < 1) {
     return;
   }
@@ -80,7 +80,7 @@ const updateRss = (state) => {
   Promise.all(promises)
     .then((responses) => {
       const posts = responses
-        .flatMap((response) => parseRss(response).posts);
+        .flatMap((response) => parseRss(response, i18n).posts);
 
       const newPosts = _.differenceBy(state.posts, posts, 'url');
 
@@ -91,7 +91,7 @@ const updateRss = (state) => {
     });
 };
 
-const makeTimeout = (delay, state) => {
+const makeTimeout = (delay, state, i18n) => {
   let time = delay;
 
   const iter = (id = null) => {
@@ -99,7 +99,7 @@ const makeTimeout = (delay, state) => {
 
     const timerId = setTimeout(() => {
       try {
-        updateRss(state);
+        updateRss(state, i18n);
         time = delay;
       } catch (err) {
         console.error(err);
@@ -113,10 +113,10 @@ const makeTimeout = (delay, state) => {
   iter();
 };
 
-const app = (state, elements) => {
+const app = (state, elements, i18n) => {
   elements.form.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    validateUrl(state, elements.form)
+    validateUrl(state, elements.form, i18n)
       .then((url) => {
         state.valid = true;
         state.error = null;
@@ -125,7 +125,7 @@ const app = (state, elements) => {
       })
       .then((url) => loadRss(url))
       .then((content) => {
-        const rssData = parseRss(content);
+        const rssData = parseRss(content, i18n);
         state.feeds.unshift(rssData.feed);
         state.posts.unshift(...rssData.posts);
         state.processState = 'finished';
@@ -133,7 +133,7 @@ const app = (state, elements) => {
       .catch((err) => {
         state.processState = 'failed';
         if (err.isAxiosError) {
-          state.error = 'Ошибка сети';
+          state.error = i18n.t('errors.network');
         } else {
           // validate message
           state.valid = false;
@@ -142,7 +142,7 @@ const app = (state, elements) => {
       });
   });
 
-  makeTimeout(5000, state);
+  makeTimeout(5000, state, i18n);
 };
 
 export default app;

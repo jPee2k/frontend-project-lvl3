@@ -1,4 +1,4 @@
-const generatePosts = (state, posts) => {
+const generatePosts = (state, posts, i18n) => {
   const isVisited = (postId) => state.uiState.visitedLinks.includes(postId);
 
   const modalTitle = document.querySelector('#modal .modal-title');
@@ -29,7 +29,7 @@ const generatePosts = (state, posts) => {
     postButton.dataset.id = post.id;
     postButton.dataset.bsToggle = 'modal';
     postButton.dataset.bsTarget = '#modal';
-    postButton.textContent = 'Просмотр';
+    postButton.textContent = i18n.t('buttons.list.open');
     postButton.addEventListener('click', () => {
       modalTitle.textContent = post.title;
       modalDescription.textContent = post.description;
@@ -45,14 +45,14 @@ const generatePosts = (state, posts) => {
   });
 };
 
-export const prependPosts = (state, { postsContainer }) => {
-  const posts = generatePosts(state, state.newPosts);
+export const prependPosts = (state, { postsContainer }, i18n) => {
+  const posts = generatePosts(state, state.newPosts, i18n);
   postsContainer
     .querySelector('ul')
     .prepend(...posts);
 };
 
-export const renderPosts = (state, { postsContainer }) => {
+export const renderPosts = (state, { postsContainer }, i18n) => {
   const cardWrapper = document.createElement('div');
   cardWrapper.classList.add('card', 'border-0');
 
@@ -61,12 +61,12 @@ export const renderPosts = (state, { postsContainer }) => {
 
   const cardTitle = document.createElement('h2');
   cardTitle.classList.add('card-title', 'h4');
-  cardTitle.textContent = 'Посты';
+  cardTitle.textContent = i18n.t('titles.posts');
 
   const postsList = document.createElement('ul');
   postsList.classList.add('list-group', 'border-0', 'rounded-0');
 
-  const items = generatePosts(state, state.posts);
+  const items = generatePosts(state, state.posts, i18n);
 
   postsList.prepend(...items);
   cardBody.append(cardTitle);

@@ -22,7 +22,7 @@ const renderText = (elements, text, isError = true) => {
   }
 };
 
-const handleState = (state, elements, processState) => {
+const handleState = (state, elements, processState, i18n) => {
   switch (processState) {
     case 'filling':
       elements.button.disabled = false;
@@ -34,14 +34,14 @@ const handleState = (state, elements, processState) => {
       elements.form.reset();
       elements.input.focus();
       elements.button.disabled = false;
-      renderText(elements, 'RSS успешно загружен', false);
+      renderText(elements, i18n.t('success.loaded'), false);
       break;
     case 'failed':
       elements.button.disabled = false;
       renderText(elements, state.error);
       break;
     default:
-      throw new Error(`Wrong process state ${processState}!`);
+      throw new Error(i18n.t('errors.status', { processState }));
   }
 };
 
@@ -53,11 +53,11 @@ const markLinks = ({ postsContainer }, linksIds = []) => {
   });
 };
 
-const initView = (unWatchedState, elements) => {
+const initView = (unWatchedState, elements, i18n) => {
   const state = onChange(unWatchedState, (path, value) => {
     switch (path) {
       case 'processState':
-        handleState(state, elements, value);
+        handleState(state, elements, value, i18n);
         break;
       case 'valid':
         renderInput(elements, value);
@@ -66,13 +66,13 @@ const initView = (unWatchedState, elements) => {
         renderText(elements, value);
         break;
       case 'feeds':
-        renderFeeds(state, elements);
+        renderFeeds(state, elements, i18n);
         break;
       case 'posts':
-        renderPosts(state, elements);
+        renderPosts(state, elements, i18n);
         break;
       case 'newPosts':
-        prependPosts(state, elements);
+        prependPosts(state, elements, i18n);
         break;
       case 'uiState.visitedLinks':
         markLinks(elements, value);
